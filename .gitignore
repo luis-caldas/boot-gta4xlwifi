@@ -1,0 +1,6 @@
+# Hidden files
+.*
+!/.gitignore
+
+# Compilation files
+/out
