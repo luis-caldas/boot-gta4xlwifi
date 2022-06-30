@@ -3,7 +3,7 @@
 !/.gitignore
 
 # Logo file
-/pics/new/logo.jpg
+/pics/logo.jpg
 
 # Compilation files
 /out
