@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 TAR_FILE_NAME="up_param.tar"
-NEW_FOLDER="./pics/new"
+NEW_FOLDER="./pics"
 
 FILE_BYTES="8388608"
 
