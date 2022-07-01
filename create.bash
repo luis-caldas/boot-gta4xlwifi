@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 TAR_FILE_NAME="up_param.tar"
-NEW_FOLDER="./pics"
+PICTURES_FOLDER="./pics"
 
 FILE_BYTES="8388608"
 
@@ -43,30 +43,43 @@ function main() {
 
 	echo "Creating output folder"
 
-	# Create out dir path
+	# Create out and tmp dir path
 	out_dir="${cur_dir}/out"
+	tmp_dir="${cur_dir}/tmp"
 
 	# Delete old file if exists
 	if [ -e "${out_dir}" ]; then
-		echo "Deleting old files"
+		echo "Deleting old out"
 		rm -r "${out_dir}"
 	fi
 
-	# Create output folder
+	# Create output and temp
 	mkdir -p "${out_dir}"
+	mkdir -p "${tmp_dir}"
 
-	echo "Adding images to TAR"
 
 	# Create name variables
 	main_logo_name="logo.jpg"
 	tar_path="${out_dir}/${TAR_FILE_NAME}"
 
 	# Copy given file to have the proper name
-	logo_path="${NEW_FOLDER}/${main_logo_name}"
+	logo_path="${tmp_dir}/${main_logo_name}"
 	cp "${1}" "${logo_path}"
 
+	# Copy all images
+	cp "${PICTURES_FOLDER}/"*".jpg" "${tmp_dir}"
+
+	echo "Stripping all pictures"
+
+	# Strip all exif information
+	for each_pic in "${tmp_dir}/"*".jpg"; do
+		exiftool -all= -overwrite_original "${each_pic}" &> /dev/null
+	done
+
+	echo "Adding images to TAR"
+
 	# Archive
-	cd "${NEW_FOLDER}" || { echo "Unable to change directory"; exit; }
+	cd "${tmp_dir}" || { echo "Unable to change directory"; exit; }
 	tar cf "${tar_path}" -- *jpg
 
 	echo "Tar file created"
@@ -77,8 +90,10 @@ function main() {
 	# Bytes checking
 	cur_bytes="$(stat --printf="%s" "${tar_path}")"
 
+	echo "Cleaning up"
+
 	# Cleanup
-	rm "${logo_path}"
+	rm -r "${tmp_dir}"
 
 	# Check if file is different size
 	if [ "$cur_bytes" -gt "$FILE_BYTES" ]; then
@@ -89,7 +104,6 @@ function main() {
 
 	# Pad the rest of the file if needed
 	if [ "$cur_bytes" -lt "$FILE_BYTES" ]; then
-		difference=$(( FILE_BYTES - cur_bytes ))
 		truncate -s "${FILE_BYTES}" "${tar_path}"
 	fi
 
