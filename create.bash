@@ -73,6 +73,7 @@ function main() {
 
 	# Strip all exif information
 	for each_pic in "${tmp_dir}/"*".jpg"; do
+		mogrify "${each_pic}" -interlace none
 		exiftool -all= -overwrite_original "${each_pic}" &> /dev/null
 	done
 
