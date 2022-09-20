@@ -5,31 +5,6 @@ PICTURES_FOLDER="./pics"
 
 FILE_BYTES="8388608"
 
-# Function to get real script dir
-function get_folder() {
-
-	# get the folder in which the script is located
-	SOURCE="${BASH_SOURCE[0]}"
-
-	# resolve $SOURCE until the file is no longer a symlink
-	while [ -h "$SOURCE" ]; do
-
-	  DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
-
-	  SOURCE="$(readlink "$SOURCE")"
-
-	  # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
-	  [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
-
-	done
-
-	# the final assignment of the directory
-	DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
-
-	# return the directory
-	echo "$DIR"
-}
-
 function main() {
 
 	echo "Boot image generator"
@@ -39,7 +14,7 @@ function main() {
 	if [ ! -f "${1}" ]; then echo "The file given does not exist"; return; fi
 
 	# Get our current script dir
-	cur_dir="$(get_folder)"
+	cur_dir="$(dirname -- "$(readlink -f -- "${BASH_SOURCE[0]}")")"
 
 	echo "Creating output folder"
 
