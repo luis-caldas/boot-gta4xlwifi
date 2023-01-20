@@ -32,7 +32,6 @@ function main() {
 	mkdir -p "${out_dir}"
 	mkdir -p "${tmp_dir}"
 
-
 	# Create name variables
 	main_logo_name="logo.jpg"
 	tar_path="${out_dir}/${TAR_FILE_NAME}"
